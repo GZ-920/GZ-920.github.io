@@ -1,42 +1,64 @@
----
-layout: page
-description: "欢迎来到博客！这里是B站@瓜子920的资源站"
----
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GZ-920的小站</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
 
-{% for post in paginator.posts %}
-<div class="post-preview">
-    <a href="{{ post.url | prepend: site.baseurl }}">
-        <h2 class="post-title">
-            {{ post.title }}
-        </h2>
-        {% if post.subtitle %}
-        <h3 class="post-subtitle">
-            {{ post.subtitle }}
-        </h3>
-        {% endif %}
-        <div class="post-content-preview">
-            {{ post.content | strip_html | truncate:200 }}
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}
-    </p>
-</div>
-<hr>
-{% endfor %}
+        h1 {
+            margin-top: 50px;
+            font-size: 2.5rem;
+            color: #333;
+        }
 
-<!-- Pager -->
-{% if paginator.total_pages > 1 %}
-<ul class="pager">
-    {% if paginator.previous_page %}
-    <li class="previous">
-        <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&larr; 上一页</a>
-    </li>
-    {% endif %}
-    {% if paginator.next_page %}
-    <li class="next">
-        <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">下一页 &rarr;</a>
-    </li>
-    {% endif %}
-</ul>
-{% endif %}
+        .button-container {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .button {
+            width: 80%;
+            max-width: 400px;
+            margin: 10px 0;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .button:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>GZ的中转站</h1>
+
+    <div class="button-container">
+        <a href="https://example1.com" class="button">网站 1</a>
+        <a href="https://example2.com" class="button">网站 2</a>
+        <a href="https://example3.com" class="button">网站 3</a>
+    </div>
+
+</body>
+</html>
