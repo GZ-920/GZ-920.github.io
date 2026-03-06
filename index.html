@@ -1,83 +1,440 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GZ-920 主站</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            color: #333;
-        }
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8">
+<title>作业管家</title>
 
-        h1 {
-            font-size: 3rem;
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            margin-bottom: 40px;
-        }
+<style>
 
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+body{
+    margin:0;
+    font-family:Segoe UI;
+    background:#ffffff;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+}
 
-        .button {
-            width: 80%;
-            max-width: 400px;
-            margin: 15px 0;
-            padding: 15px 30px;
-            font-size: 1.3rem;
-            color: white;
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-decoration: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+.container{
+    flex:1;
+    padding:20px;
+    box-sizing:border-box;
+    display:flex;
+}
 
-        .button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-        }
+.grid{
+    flex:1;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows:repeat(2,1fr);
+    gap:20px;
+}
 
-        .button:focus {
-            outline: none;
-        }
+.card{
+    background:#f7f3e9;
+    border-radius:35px;
+    padding:20px;
+    position:relative;
+    transition:0.2s;
+}
 
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2.5rem;
-            }
+.card:hover{
+    transform:scale(1.03);
+}
 
-            .button {
-                font-size: 1.1rem;
-                padding: 12px 20px;
-            }
-        }
-    </style>
+.homework-text{
+    margin-top:15px;
+    font-size:24px;
+    line-height:1.6;
+}
+
+.add-btn{
+    position:absolute;
+    right:20px;
+    bottom:20px;
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    border:none;
+    background:#e9e26b;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    display:none;
+    justify-content:center;
+    align-items:center;
+}
+
+.modal{
+    background:#f5f5f5;
+    width:80%;
+    max-width:900px;
+    border-radius:25px;
+    padding:25px;
+    display:flex;
+    gap:20px;
+    animation:popUp 0.25s ease;
+}
+
+@keyframes popUp{
+    from{transform:scale(0.8);opacity:0;}
+    to{transform:scale(1);opacity:1;}
+}
+
+.left{flex:2;}
+
+.right{
+    flex:1;
+    background:#e6e3bd;
+    padding:15px;
+    border-radius:20px;
+    display:flex;
+    flex-direction:column;
+    height:500px;
+}
+
+.input-row{
+    display:flex;
+    align-items:center;
+    margin-bottom:12px;
+}
+
+.input-row span{
+    width:30px;
+    font-weight:bold;
+}
+
+.input-row input{
+    flex:1;
+    padding:10px 12px;
+    border:none;
+    border-radius:15px;
+    background:#ffffff;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.plus-row{
+    text-align:center;
+}
+
+.plus-row button{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    border:none;
+    background:#e9e26b;
+    font-size:18px;
+}
+
+/* 分类标签 */
+
+.word-tabs{
+    display:flex;
+    gap:6px;
+    margin-bottom:8px;
+}
+
+.word-tabs button{
+    flex:1;
+    border:none;
+    border-radius:8px;
+    padding:4px;
+    cursor:pointer;
+    background:#d9d6a6;
+}
+
+/* 词库滚动区 */
+
+.quick-words{
+    flex:1;
+    overflow-y:auto;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    padding-right:4px;
+}
+
+.quick-words button{
+    border:none;
+    border-radius:6px;
+    padding:6px 10px;
+    cursor:pointer;
+}
+
+/* 固定小键盘 */
+
+.keypad{
+    margin-top:10px;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:6px;
+}
+
+.keypad button{
+    border:none;
+    border-radius:6px;
+    padding:8px;
+    cursor:pointer;
+}
+
+.bottom-btns{
+    margin-top:10px;
+    text-align:right;
+}
+
+.bottom-btns button{
+    padding:6px 12px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+</style>
 </head>
+
 <body>
 
-    <h1>GZ-920的小站</h1>
+<div class="container">
+<div class="grid" id="subjectGrid"></div>
+</div>
 
-    <div class="button-container">
-        <a href="https://d5h5u6ld.yichafen.com" class="button">官方查分(可用)</a>
-        <a href="https://12391.net/sdfzbj2022all.app" class="button">第三方信息查询</a>
-        <a href="https://gz-920.github.io/fzcha/" class="button">第三方图片查询</a>
-    </div>
+<div class="overlay" id="overlay">
+
+<div class="modal">
+
+<div class="left">
+<h2 id="editorTitle"></h2>
+
+<div id="inputArea"></div>
+
+<div class="plus-row">
+<button onclick="addInput()">+</button>
+</div>
+
+</div>
+
+
+<div class="right">
+
+<h3>快捷选词</h3>
+
+<div class="word-tabs">
+<button onclick="loadWords('task')">内容</button>
+<button onclick="loadWords('time')">时间</button>
+<button onclick="loadWords('action')">动作</button>
+<button onclick="loadWords('logic')">逻辑</button>
+</div>
+
+<div class="quick-words" id="quickWords"></div>
+
+<div class="keypad" id="keypad"></div>
+
+<div class="bottom-btns">
+<button onclick="closeModal()">取消</button>
+<button onclick="saveHomework()">完成</button>
+</div>
+
+</div>
+
+</div>
+</div>
+
+<script>
+
+const subjects=["语文","数学","英语","政治","历史","地理"];
+
+let currentSubject=null;
+let selectedInput=null;
+let homeworkData=JSON.parse(localStorage.getItem("homeworkData"))||{};
+
+const grid=document.getElementById("subjectGrid");
+
+subjects.forEach(sub=>{
+const card=document.createElement("div");
+
+card.className="card";
+
+card.innerHTML=`
+<h3>${sub}</h3>
+<div class="homework-text" id="hw-${sub}"></div>
+<button class="add-btn" onclick="openEditor('${sub}')">+</button>
+`;
+
+grid.appendChild(card);
+
+renderHomework(sub);
+});
+
+function renderHomework(subject){
+
+const display=document.getElementById("hw-"+subject);
+
+if(homeworkData[subject]){
+
+display.innerHTML=homeworkData[subject]
+.map((t,i)=>`${i+1}. ${t}`)
+.join("<br>");
+
+}
+
+}
+
+function openEditor(subject){
+
+currentSubject=subject;
+
+document.getElementById("editorTitle").innerText=subject+" 作业布置";
+
+document.getElementById("overlay").style.display="flex";
+
+document.getElementById("inputArea").innerHTML="";
+
+if(homeworkData[subject]){
+
+homeworkData[subject].forEach(text=>{
+addInput(text);
+});
+
+}else{
+
+addInput();
+
+}
+
+}
+
+function closeModal(){
+
+document.getElementById("overlay").style.display="none";
+
+}
+
+function addInput(defaultText=""){
+
+const area=document.getElementById("inputArea");
+
+const index=area.children.length+1;
+
+const row=document.createElement("div");
+
+row.className="input-row";
+
+row.innerHTML=`
+<span>${index}</span>
+<input type="text" value="${defaultText}">
+`;
+
+area.appendChild(row);
+
+const input=row.querySelector("input");
+
+input.focus();
+
+selectedInput=input;
+
+}
+
+/* 插入文本 */
+
+function insertText(text){
+
+if(selectedInput){
+
+selectedInput.value+=text;
+
+selectedInput.focus();
+
+}
+
+}
+
+/* 保存 */
+
+function saveHomework(){
+
+const inputs=document.querySelectorAll("#inputArea input");
+
+let arr=[];
+
+inputs.forEach(i=>{
+if(i.value.trim()!="") arr.push(i.value);
+});
+
+homeworkData[currentSubject]=arr;
+
+localStorage.setItem("homeworkData",JSON.stringify(homeworkData));
+
+renderHomework(currentSubject);
+
+closeModal();
+
+}
+
+/* 分类词库 */
+
+const wordCategories={
+
+task:["校本","试卷","A本","B本","课本","正面","反面","\"211\"法","\"985\"法","听力","阅读理解","A篇","B篇","C篇","D篇","完形填空","七选五","读后续写","默写","听写"],
+
+time:["明天","今天","后天","这周","下周","月","日","之前","之后","一","二","三","四","五","六","日"],
+
+action:["完成","预习","复习","听写","默写","背诵","熟读","过关","订正","提交","不交","不写","都写","选做"],
+
+logic:["第","和","或","除了","都","，","。"]
+
+};
+
+function loadWords(type){
+
+const area=document.getElementById("quickWords");
+
+area.innerHTML="";
+
+wordCategories[type].forEach(w=>{
+
+const btn=document.createElement("button");
+
+btn.innerText=w;
+
+btn.onclick=()=>insertText(w);
+
+area.appendChild(btn);
+
+});
+
+}
+
+loadWords("task");
+
+/* 小键盘 */
+
+[
+"1","2","3","第","题",
+"4","5","6","，","课",
+"7","8","9",".","面",
+"P","0","~","+","篇"
+].forEach(k=>{
+
+const btn=document.createElement("button");
+
+btn.innerText=k;
+
+btn.onclick=()=>insertText(k);
+
+document.getElementById("keypad").appendChild(btn);
+
+});
+
+</script>
 
 </body>
 </html>
