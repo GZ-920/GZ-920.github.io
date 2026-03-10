@@ -272,8 +272,8 @@ display:none;
 <div id="inputArea"></div>
 
 <div class="plus-row">
-<button onclick="addInput()">＋新增一行</button>
-<button onclick="deleteCurrent()">删除当前</button>
+<button onclick="addInput()">＋再布一项</button>
+<button onclick="deleteCurrent()">删除本项</button>
 <button onclick="clearSubject()">清空本科</button>
 </div>
 
@@ -306,7 +306,7 @@ display:none;
 
 <!-- 操作说明 -->
 
-<button class="help-btn" onclick="toggleHelp()">操作说明</button>
+<button class="help-btn" onclick="toggleHelp()">操作说明开/关</button>
 
 <div class="help-box" id="helpBox"></div>
 
@@ -600,7 +600,13 @@ document.getElementById("keypad").appendChild(btn)
 
 const helpMD=`
 
-# 作业管家操作说明
+# 作业管家操作说明（V1.1.0_20260310）
+
+## 重大更新！
+- 小键盘增加←（删除键）和空格键
+- 插入快捷词汇位置可以在任意位置插入
+- 新增操作说明
+- 新增“＋再布一项” “删除本项” “清空本科”按钮
 
 ## 基本操作
 - 点击学科 + 布置作业
