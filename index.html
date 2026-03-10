@@ -312,6 +312,8 @@ display:none;
 
 <script>
 
+/* 学科 */
+
 const subjects=["语文","数学","英语","政治","历史","地理"]
 
 let currentSubject=null
@@ -323,6 +325,7 @@ const grid=document.getElementById("subjectGrid")
 subjects.forEach(sub=>{
 
 const card=document.createElement("div")
+
 card.className="card"
 
 card.innerHTML=`
@@ -332,9 +335,12 @@ card.innerHTML=`
 `
 
 grid.appendChild(card)
+
 renderHomework(sub)
 
 })
+
+/* 显示作业 */
 
 function renderHomework(subject){
 
@@ -366,7 +372,11 @@ if(homeworkData[subject]){
 
 homeworkData[subject].forEach(t=>addInput(t))
 
-}else addInput()
+}else{
+
+addInput()
+
+}
 
 }
 
@@ -387,6 +397,7 @@ const area=document.getElementById("inputArea")
 const index=area.children.length+1
 
 const row=document.createElement("div")
+
 row.className="input-row"
 
 row.innerHTML=`
@@ -430,7 +441,11 @@ updateNumbers()
 function updateNumbers(){
 
 document.querySelectorAll("#inputArea .input-row")
-.forEach((r,i)=>r.querySelector("span").innerText=i+1)
+.forEach((r,i)=>{
+
+r.querySelector("span").innerText=i+1
+
+})
 
 }
 
@@ -441,13 +456,14 @@ function clearSubject(){
 if(confirm("确定清空当前学科作业？")){
 
 document.getElementById("inputArea").innerHTML=""
+
 addInput()
 
 }
 
 }
 
-/* 插入文本 */
+/* 光标插入 */
 
 function insertText(text){
 
@@ -458,12 +474,36 @@ let end=selectedInput.selectionEnd
 
 let value=selectedInput.value
 
-selectedInput.value=value.slice(0,start)+text+value.slice(end)
+selectedInput.value=
+value.substring(0,start)+
+text+
+value.substring(end)
 
 let pos=start+text.length
 
 selectedInput.focus()
 selectedInput.setSelectionRange(pos,pos)
+
+}
+
+/* 删除字符 */
+
+function deleteChar(){
+
+if(!selectedInput) return
+
+let start=selectedInput.selectionStart
+let value=selectedInput.value
+
+if(start>0){
+
+selectedInput.value=
+value.substring(0,start-1)+
+value.substring(start)
+
+selectedInput.setSelectionRange(start-1,start-1)
+
+}
 
 }
 
@@ -481,7 +521,10 @@ if(i.value.trim()) arr.push(i.value)
 
 homeworkData[currentSubject]=arr
 
-localStorage.setItem("homeworkData",JSON.stringify(homeworkData))
+localStorage.setItem(
+"homeworkData",
+JSON.stringify(homeworkData)
+)
 
 renderHomework(currentSubject)
 
@@ -493,11 +536,11 @@ closeModal()
 
 const wordCategories={
 
-task:["校本","试卷","A本","B本","课本","正面","反面","听力","阅读理解","A篇","B篇","C篇","D篇","完形填空","七选五","读后续写","默写","听写","思维导图"],
+task:["校本","试卷","A本","B本","课本","听力","阅读理解","A篇","B篇","C篇","D篇","完形填空","七选五","读后续写","默写","听写","思维导图"],
 
 time:["明天","今天","后天","这周","下周","月","日","之前","之后"],
 
-action:["完成","预习","复习","听写","默写","背诵","整理","熟读","过关","订正","提交"],
+action:["完成","预习","复习","背诵","整理","熟读","过关","订正","提交"],
 
 logic:["第","和","或","除了","都","，","。"]
 
@@ -527,65 +570,55 @@ loadWords("task")
 
 /* 小键盘 */
 
-[
+const keys=[
 "1","2","3","第","题",
 "4","5","6","，","课",
 "7","8","9",".","面",
-"P","0","~","+","篇"
-].forEach(k=>{
+"P","0","~","+","篇",
+"←","空格"
+]
+
+keys.forEach(k=>{
 
 const btn=document.createElement("button")
 
 btn.innerText=k
-btn.onclick=()=>insertText(k)
+
+btn.onclick=()=>{
+
+if(k==="←") deleteChar()
+else if(k==="空格") insertText(" ")
+else insertText(k)
+
+}
 
 document.getElementById("keypad").appendChild(btn)
 
 })
 
-/* 操作说明 */
+/* Markdown说明 */
 
 const helpMD=`
 
 # 作业管家操作说明
 
 ## 基本操作
-- 点击学科 **+** 布置作业
-- 输入框每行代表一条作业
-- 按 **Enter** 自动新增一行
+- 点击学科 + 布置作业
+- 每行是一条作业
+- Enter 自动新增一行
 
 ## 快捷输入
-- 右侧 **快捷词** 可快速插入
-- **数字键盘**可输入序号
-- 内容插入在 **光标位置**
+- 右侧快捷词快速输入
+- 小键盘输入数字和符号
+- 插入位置为光标位置
 
-## 编辑功能
-- 删除当前：删除当前行作业
+## 编辑
+- 删除当前：删除当前行
 - 清空本科：清空当前学科
-- 点击输入框可切换编辑行
 
 ## 保存
-点击 **完成** 自动保存到浏览器本地
+点击完成自动保存
 `
-
-function toggleHelp(){
-
-const box=document.getElementById("helpBox")
-
-if(box.style.display=="block"){
-
-box.style.display="none"
-
-}else{
-
-box.innerHTML=parseMarkdown(helpMD)
-box.style.display="block"
-
-}
-
-}
-
-/* 简单Markdown解析 */
 
 function parseMarkdown(md){
 
@@ -597,6 +630,41 @@ return md
 
 }
 
+function toggleHelp(){
+
+const box=document.getElementById("helpBox")
+
+if(box.style.display==="block"){
+
+box.style.display="none"
+
+}else{
+
+box.innerHTML=parseMarkdown(helpMD)
+
+box.style.display="block"
+
+}
+
+}
+
+/* Ctrl快捷学科 */
+
+document.addEventListener("keydown",e=>{
+
+if(e.ctrlKey){
+
+let num=parseInt(e.key)
+
+if(num>=1 && num<=6){
+
+openEditor(subjects[num-1])
+
+}
+
+}
+
+})
 </script>
 
 </body>
