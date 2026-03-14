@@ -312,32 +312,76 @@ display:none;
 
 <script>
 
+// async function saveOnline(){
+
+// const token="bcb344684b734b99d15f5a6147d6ff65"
+// const owner="alpha-v"
+// const repo="homework-data"
+// const path="homework.json"
+
+// const url=`https://gitee.com/api/v5/repos/${owner}/${repo}/contents/${path}`
+
+// const res=await fetch(url)
+// const data=await res.json()
+
+// const sha=data.sha
+
+// await fetch(url,{
+// method:"PUT",
+// headers:{
+// "Content-Type":"application/json"
+// },
+// body:JSON.stringify({
+// access_token:token,
+// content:btoa(JSON.stringify(homeworkData)),
+// sha:sha,
+// message:"update homework"
+// })
+// })
+
+// }
+
 async function saveOnline(){
+
+try{
+
 
 const token="bcb344684b734b99d15f5a6147d6ff65"
 const owner="alpha-v"
 const repo="homework-data"
 const path="homework.json"
 
-const url=`https://gitee.com/api/v5/repos/${owner}/${repo}/contents/${path}`
+const url=`https://gitee.com/api/v5/repos/${owner}/${repo}/contents/${path}?access_token=${token}`
 
 const res=await fetch(url)
 const data=await res.json()
 
 const sha=data.sha
 
-await fetch(url,{
+const result=await fetch(url,{
 method:"PUT",
 headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-access_token:token,
-content:btoa(JSON.stringify(homeworkData)),
+content:btoa(unescape(encodeURIComponent(JSON.stringify(homeworkData)))),
 sha:sha,
 message:"update homework"
 })
 })
+
+const r=await result.json()
+
+console.log(r)
+
+alert("云端保存成功")
+
+}catch(e){
+
+console.log(e)
+alert("云端保存失败")
+
+}
 
 }
 
