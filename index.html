@@ -126,8 +126,6 @@ background:#ffffff;
 box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
 
-/* 行操作 */
-
 .row-actions{
 margin-left:6px;
 }
@@ -154,8 +152,6 @@ background:#e9e26b;
 cursor:pointer;
 }
 
-/* 分类标签 */
-
 .word-tabs{
 display:flex;
 gap:6px;
@@ -170,8 +166,6 @@ padding:4px;
 cursor:pointer;
 background:#d9d6a6;
 }
-
-/* 词库 */
 
 .quick-words{
 flex:1;
@@ -189,8 +183,6 @@ padding:6px 10px;
 cursor:pointer;
 }
 
-/* 小键盘 */
-
 .keypad{
 margin-top:10px;
 display:grid;
@@ -205,8 +197,6 @@ padding:8px;
 cursor:pointer;
 }
 
-/* 底部按钮 */
-
 .bottom-btns{
 margin-top:10px;
 text-align:right;
@@ -219,8 +209,6 @@ border-radius:12px;
 cursor:pointer;
 }
 
-/* 操作说明按钮 */
-
 .help-btn{
 position:fixed;
 right:20px;
@@ -232,8 +220,6 @@ padding:10px 16px;
 cursor:pointer;
 box-shadow:0 4px 10px rgba(0,0,0,0.2);
 }
-
-/* 说明窗口 */
 
 .help-box{
 position:fixed;
@@ -259,16 +245,11 @@ display:none;
 <div class="grid" id="subjectGrid"></div>
 </div>
 
-<!-- 编辑窗口 -->
-
 <div class="overlay" id="overlay">
-
 <div class="modal">
 
 <div class="left">
-
 <h2 id="editorTitle"></h2>
-
 <div id="inputArea"></div>
 
 <div class="plus-row">
@@ -276,7 +257,6 @@ display:none;
 <button onclick="deleteCurrent()">删除本项</button>
 <button onclick="clearSubject()">清空本科</button>
 </div>
-
 </div>
 
 <div class="right">
@@ -304,99 +284,55 @@ display:none;
 </div>
 </div>
 
-<!-- 操作说明 -->
-
-<button class="help-btn" onclick="toggleHelp()">操作说明开/关</button>
-
+<button class="help-btn" onclick="toggleHelp()">操作说明</button>
 <div class="help-box" id="helpBox"></div>
 
 <script>
 
-// async function saveOnline(){
+/* JSONBin配置 */
 
-// const token="bcb344684b734b99d15f5a6147d6ff65"
-// const owner="alpha-v"
-// const repo="homework-data"
-// const path="homework.json"
+const BIN_ID="69b5820fb7ec241ddc6a7aef"
+const API_KEY="$2a$10$OOK6/nrsFdOK0TS5TkVfme3FyQ5UipYDtxIPqYFgdHxDUa1pDEfFi"
 
-// const url=`https://gitee.com/api/v5/repos/${owner}/${repo}/contents/${path}`
-
-// const res=await fetch(url)
-// const data=await res.json()
-
-// const sha=data.sha
-
-// await fetch(url,{
-// method:"PUT",
-// headers:{
-// "Content-Type":"application/json"
-// },
-// body:JSON.stringify({
-// access_token:token,
-// content:btoa(JSON.stringify(homeworkData)),
-// sha:sha,
-// message:"update homework"
-// })
-// })
-
-// }
+/* 云端保存 */
 
 async function saveOnline(){
 
 try{
 
-
-const token="bcb344684b734b99d15f5a6147d6ff65"
-const owner="alpha-v"
-const repo="homework-data"
-const path="homework.json"
-
-const url=`https://gitee.com/api/v5/repos/${owner}/${repo}/contents/${path}?access_token=${token}`
-
-const res=await fetch(url)
-const data=await res.json()
-
-const sha=data.sha
-
-const result=await fetch(url,{
+await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`,{
 method:"PUT",
 headers:{
-"Content-Type":"application/json"
+"Content-Type":"application/json",
+"X-Master-Key":API_KEY
 },
-body:JSON.stringify({
-content:btoa(unescape(encodeURIComponent(JSON.stringify(homeworkData)))),
-sha:sha,
-message:"update homework"
+body:JSON.stringify(homeworkData)
 })
-})
-
-const r=await result.json()
-
-console.log(r)
-
-alert("云端保存成功")
 
 }catch(e){
-
-console.log(e)
-alert("云端保存失败")
-
+console.log("云保存失败",e)
 }
 
 }
+
+/* 云端读取 */
 
 async function loadOnline(){
 
-const url="https://gitee.com/api/v5/repos/alpha-v/homework-data/contents/homework.json"
+try{
 
-const res=await fetch(url)
+const res=await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`)
 const data=await res.json()
 
-const content=JSON.parse(atob(data.content))
+homeworkData=data.record
 
-homeworkData=content
+localStorage.setItem("homeworkData",JSON.stringify(homeworkData))
 
 subjects.forEach(renderHomework)
+
+}catch(e){
+console.log("云读取失败")
+}
 
 }
 
@@ -428,8 +364,6 @@ renderHomework(sub)
 
 })
 
-/* 显示作业 */
-
 function renderHomework(subject){
 
 const display=document.getElementById("hw-"+subject)
@@ -443,8 +377,6 @@ display.innerHTML=homeworkData[subject]
 }
 
 }
-
-/* 打开编辑 */
 
 function openEditor(subject){
 
@@ -461,29 +393,21 @@ if(homeworkData[subject]){
 homeworkData[subject].forEach(t=>addInput(t))
 
 }else{
-
 addInput()
-
 }
 
 }
-
-/* 关闭 */
 
 function closeModal(){
 document.getElementById("overlay").style.display="none"
 }
 
-/* 新增输入 */
-
 function addInput(text=""){
 
 const area=document.getElementById("inputArea")
-
 const index=area.children.length+1
 
 const row=document.createElement("div")
-
 row.className="input-row"
 
 row.innerHTML=`
@@ -501,28 +425,15 @@ input.focus()
 input.onclick=()=>selectedInput=input
 input.onfocus=()=>selectedInput=input
 
-input.addEventListener("keydown",e=>{
-if(e.key==="Enter"){
-e.preventDefault()
-addInput()
 }
-})
-
-}
-
-/* 删除当前 */
 
 function deleteCurrent(){
 
 if(!selectedInput) return
-
 selectedInput.parentElement.remove()
-
 updateNumbers()
 
 }
-
-/* 更新序号 */
 
 function updateNumbers(){
 
@@ -535,26 +446,18 @@ r.querySelector("span").innerText=i+1
 
 }
 
-/* 清空 */
-
 function clearSubject(){
 
 if(confirm("确定清空当前学科作业？")){
-
 document.getElementById("inputArea").innerHTML=""
-
 addInput()
-
 }
 
 }
-
-/* 保存 */
 
 function saveHomework(){
 
 const inputs=document.querySelectorAll("#inputArea input")
-
 let arr=[]
 
 inputs.forEach(i=>{
@@ -573,9 +476,45 @@ closeModal()
 
 }
 
-/* 页面启动加载云端 */
-
 window.onload=loadOnline
+
+/* 插入文本 */
+
+function insertText(text){
+
+if(!selectedInput) return
+
+const start=selectedInput.selectionStart
+const end=selectedInput.selectionEnd
+const value=selectedInput.value
+
+selectedInput.value=value.slice(0,start)+text+value.slice(end)
+
+selectedInput.selectionStart=
+selectedInput.selectionEnd=start+text.length
+
+selectedInput.focus()
+
+}
+
+function deleteChar(){
+
+if(!selectedInput) return
+
+const pos=selectedInput.selectionStart
+
+if(pos>0){
+
+selectedInput.value=
+selectedInput.value.slice(0,pos-1)+
+selectedInput.value.slice(pos)
+
+selectedInput.selectionStart=
+selectedInput.selectionEnd=pos-1
+
+}
+
+}
 
 /* 快捷词 */
 
@@ -589,15 +528,12 @@ logic:["第","和","或","除了","都","，","。"]
 function loadWords(type){
 
 const area=document.getElementById("quickWords")
-
 area.innerHTML=""
 
 wordCategories[type].forEach(w=>{
 
 const btn=document.createElement("button")
-
 btn.innerText=w
-
 btn.onclick=()=>insertText(w)
 
 area.appendChild(btn)
@@ -621,7 +557,6 @@ const keys=[
 keys.forEach(k=>{
 
 const btn=document.createElement("button")
-
 btn.innerText=k
 
 btn.onclick=()=>{
@@ -635,6 +570,50 @@ else insertText(k)
 document.getElementById("keypad").appendChild(btn)
 
 })
+
+/* 操作说明 */
+
+function toggleHelp(){
+
+const box=document.getElementById("helpBox")
+
+if(box.style.display==="block"){
+box.style.display="none"
+return
+}
+
+box.innerHTML=`
+
+<h2>作业管家使用说明</h2>
+
+<h3>布置作业</h3>
+
+<p>点击学科右下角 + 打开布置界面</p>
+
+<h3>快捷输入</h3>
+
+<p>右侧可点击词库或数字键盘快速输入</p>
+
+<h3>键盘操作</h3>
+
+<p>Enter 可快速新增一行作业</p>
+
+<h3>管理作业</h3>
+
+<ul>
+<li>删除本项：删除当前输入行</li>
+<li>清空本科：删除该学科所有作业</li>
+</ul>
+
+<h3>数据保存</h3>
+
+<p>本地 + 云端自动同步</p>
+
+`
+
+box.style.display="block"
+
+}
 
 </script>
 
